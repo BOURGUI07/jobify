@@ -6,7 +6,7 @@ import { FaCaretDown } from "react-icons/fa/index.esm";
 
 function LogoutContainer() {
   const [showLogout, setShowLogout] = useState(false);
-  const { user, logoutuser } = useDashboard();
+  const { user, logoutUser } = useDashboard();
   return (
     <Wrapper>
       <button
@@ -19,7 +19,7 @@ function LogoutContainer() {
         <FaCaretDown />
       </button>
       <div className={`dropdown ${showLogout ? "show-dropdown" : ""}`}>
-        <button className="dropdown-btn" onClick={logoutuser}>
+        <button className="dropdown-btn" onClick={logoutUser}>
           Logout
         </button>
       </div>
