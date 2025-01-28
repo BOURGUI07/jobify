@@ -8,11 +8,13 @@ import DashboardLayout, {
 
 import Error from "./pages/Error";
 import Landing from "./pages/Landing";
-import AddJob from "./pages/AddJob";
+import AddJob, { addJobAction } from "./pages/AddJob";
 import Profile from "./pages/Profile";
 import Stats from "./pages/Stats";
-import AllJobs from "./pages/AllJobs";
+import AllJobs, { jobsLoader } from "./pages/AllJobs";
 import Admin from "./pages/Admin";
+import EditJob, { editJobAction, getJobLoader } from "./pages/EditJob";
+import { deleteJobAction } from "./pages/DeleteJob";
 
 export const checkDefaultTheme = () => {
   const isDarkTheme = localStorage.getItem("darkTheme") === "true";
@@ -47,6 +49,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AddJob />,
+            action: addJobAction,
           },
           {
             path: "profile",
@@ -59,10 +62,21 @@ const router = createBrowserRouter([
           {
             path: "all-jobs",
             element: <AllJobs />,
+            loader: jobsLoader,
           },
           {
             path: "admin",
             element: <Admin />,
+          },
+          {
+            path: "edit-job/:id",
+            element: <EditJob />,
+            loader: getJobLoader,
+            action: editJobAction,
+          },
+          {
+            path: "delete-job/:id",
+            action: deleteJobAction,
           },
         ],
       },
