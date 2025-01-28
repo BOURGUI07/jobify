@@ -4,10 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "setup-project": "npm i && cd client && npm i",
+    "dev": "vite"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",

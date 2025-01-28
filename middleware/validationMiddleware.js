@@ -1,5 +1,9 @@
 import { body, param, validationResult } from "express-validator";
-import { BadRequestError, NotFoundError } from "../errors/customError.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../errors/customError.js";
 import { JOB_STATUS, JOB_TYPE } from "./../utils/constants.js";
 import mongoose from "mongoose";
 import Job from "../models/JobModel.js";
@@ -32,12 +36,16 @@ export const validateJobInput = withValidationErrors([
 ]);
 
 export const validateJobId = withValidationErrors([
-  param("id").custom(async (value) => {
+  param("id").custom(async (value, { req }) => {
     const isValidId = mongoose.Types.ObjectId.isValid(value);
     if (!isValidId) throw new BadRequestError("Invalid MongoDB Id!");
 
     const job = await Job.findById(value);
     if (!job) throw new NotFoundError(`no job with id ${value} is found`);
+    const isAdmin = req.user.role === "admin";
+    const isOwner = req.user.userId === String(job.createdBy);
+    if (!isAdmin && !isOwner)
+      throw new UnauthorizedError("not authorized to access this route");
   }),
 ]);
 
@@ -70,4 +78,26 @@ export const validateLoginInput = withValidationErrors([
     .isEmail()
     .withMessage("Invalid email format"),
   body("password").notEmpty().withMessage("password is required!"),
+]);
+
+export const validateUpdateUserInput = withValidationErrors([
+  body("name").notEmpty().withMessage("name is required!"),
+  body("password")
+    .notEmpty()
+    .withMessage("password is required!")
+    .isLength({ min: 8 })
+    .withMessage("password must be at least 8 characters long"),
+  body("email")
+    .notEmpty()
+    .withMessage("email is required!")
+    .isEmail()
+    .withMessage("Invalid Email format")
+    .custom(async (email) => {
+      const user = await User.findOne({ email });
+      if (user && String(user._id) !== req.user.userId)
+        throw new BadRequestError(`User with email: ${email} already exists`);
+    }),
+
+  body("location").notEmpty().withMessage("location is required!"),
+  body("lastname").notEmpty().withMessage("lastname is required!"),
 ]);

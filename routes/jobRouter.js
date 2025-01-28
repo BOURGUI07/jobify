@@ -15,7 +15,6 @@ import {
   validateJobId,
 } from "../middleware/validationMiddleware.js";
 
-router.route("/");
 router.route("/").get(getAllJobs).post(validateJobInput, createJob);
 router
   .route("/:id")

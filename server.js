@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -31,6 +32,7 @@ app.post("/", (req, res) => {
 // routers
 import jobRouter from "./routes/jobRouter.js";
 import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 /*
 /////////////////// GET JOBS
@@ -54,8 +56,12 @@ app.patch("/api/v1/jobs/:id", updateJob);
 app.delete("/api/v1/jobs/:id", deleteJob);
 */
 
-app.use("/api/v1/jobs", jobRouter);
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", authenticateUser, userRouter);
+app.get("/api/v1/test", (req, res) => {
+  res.json({ msg: "hello youness!" });
+});
 
 //////////////////////// NOT FOUND PAGE
 
@@ -69,6 +75,8 @@ app.use(errorHandlerMiddleware);
 
 ////////////////// MONGOOSE
 import mongoose from "mongoose";
+import { authenticateUser } from "./middleware/authMiddleware.js";
+import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 5100;
 
