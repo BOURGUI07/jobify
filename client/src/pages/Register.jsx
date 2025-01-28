@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
-import Login from "./Login";
+import { Form, NavLink, redirect, useNavigation } from "react-router-dom";
 import Wrapper from "../assets/wrappers/RegisterAndLoginPage";
 import Logo from "../ui/Logo";
+import customFetch from "../utils/customFetch";
+import { toast } from "react-toastify";
 
 export function FormRow({ name, id, defaultValue, label, type }) {
   return (
@@ -21,10 +22,26 @@ export function FormRow({ name, id, defaultValue, label, type }) {
   );
 }
 
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    await customFetch.post("/auth/register", data);
+    toast.success("Successful Registration");
+    return redirect("/login");
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response?.data?.msg);
+    return error;
+  }
+};
+
 function Register() {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   return (
     <Wrapper>
-      <form className="form">
+      <Form method="post" className="form">
         <Logo />
         <h4>Register</h4>
         <FormRow
@@ -35,9 +52,10 @@ function Register() {
           type="text"
         />
         <FormRow
-          id="lastname"
-          name="lastname"
+          id="lastName"
+          name="lastName"
           defaultValue="bourgui"
+          type="text"
           label="last name"
         />
         <FormRow
@@ -55,14 +73,14 @@ function Register() {
           label="email"
         />
         <FormRow
-          type="text"
+          type="password"
           id="password"
           name="password"
-          defaultValue={123456}
+          defaultValue="abcd1234"
           label="password"
         />
-        <button type="submit" className="btn btn-block">
-          Submit
+        <button disabled={isSubmitting} type="submit" className="btn btn-block">
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
         <p>
           Already a member?{" "}
@@ -70,7 +88,7 @@ function Register() {
             Login
           </NavLink>
         </p>
-      </form>
+      </Form>
     </Wrapper>
   );
 }

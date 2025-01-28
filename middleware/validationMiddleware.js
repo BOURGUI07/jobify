@@ -68,7 +68,7 @@ export const validateRegisterInput = withValidationErrors([
     }),
 
   body("location").notEmpty().withMessage("location is required!"),
-  body("lastname").notEmpty().withMessage("lastname is required!"),
+  body("lastName").notEmpty().withMessage("lastname is required!"),
 ]);
 
 export const validateLoginInput = withValidationErrors([
@@ -99,5 +99,5 @@ export const validateUpdateUserInput = withValidationErrors([
     }),
 
   body("location").notEmpty().withMessage("location is required!"),
-  body("lastname").notEmpty().withMessage("lastname is required!"),
+  body("lastName").notEmpty().withMessage("lastname is required!"),
 ]);
